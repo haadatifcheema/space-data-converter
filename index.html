@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Data Converter | IGCSE Computer Science</title>
+    <title>Space Data Converter</title>
     <!-- Google Fonts for futuristic telemetry look -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -317,62 +317,6 @@
             color: #22c55e;
         }
 
-        /* Educational Code Explainer Card */
-        .explainer-card {
-            background: rgba(5, 8, 18, 0.8);
-            border: 1px solid rgba(121, 40, 202, 0.3);
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .explainer-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .explainer-header h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
-            color: var(--neon-purple);
-            letter-spacing: 0.5px;
-        }
-
-        .code-snippet {
-            background: #060913;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 14px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: #a5b4fc;
-            overflow-x: auto;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        .code-comment {
-            color: #64748b;
-            font-style: italic;
-        }
-
-        .code-keyword {
-            color: #c084fc;
-        }
-
-        .code-method {
-            color: var(--neon-cyan);
-        }
-
-        .explainer-footer {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
         /* Footer */
         footer {
             margin-top: auto;
@@ -420,9 +364,9 @@
 
     <!-- Header -->
     <header>
-        <div class="badge">IGCSE Computer Science Module</div>
+        <div class="badge">Telemetry System</div>
         <h1>Space Data Converter</h1>
-        <p class="tagline">Convert Denary spacecraft telemetry data into Binary & Hexadecimal systems.</p>
+        <p class="tagline">Convert spacecraft telemetry data seamlessly between Denary, Binary, and Hexadecimal.</p>
     </header>
 
     <!-- Main Converter Card -->
@@ -484,38 +428,12 @@
         </div>
     </div>
 
-    <!-- IGCSE Student Educational Code Explainer -->
-    <div class="converter-container explainer-card">
-        <div class="explainer-header">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--neon-purple)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <h3>IGCSE Computer Science: How JavaScript Conversions Work</h3>
-        </div>
-        <div class="code-snippet">
-<span class="code-comment">// 1. Converting a number to Binary (Base-2)</span>
-<span class="code-keyword">let</span> decimalNum = <span style="color: #f43f5e;">42</span>;
-<span class="code-keyword">let</span> binaryString = decimalNum.<span class="code-method">toString</span>(<span style="color: #f43f5e;">2</span>); 
-<span class="code-comment">// .toString(2) tells JavaScript to convert the number into Base-2 (binary digits 0 and 1).</span>
-<span class="code-comment">// Result: "101010" (42 in binary is 32 + 8 + 2)</span>
-
-<span class="code-keyword">let</span> hexString = decimalNum.<span class="code-method">toString</span>(<span style="color: #f43f5e;">16</span>);
-<span class="code-comment">// .toString(16) converts the number into Base-16 (Hexadecimal: 0-9 and A-F).</span>
-<span class="code-comment">// Result: "2a" (2 × 16 + 10)</span>
-
-<span class="code-comment">// 2. Converting back from Binary/Hex to Denary</span>
-<span class="code-keyword">let</span> denaryVal = <span class="code-method">parseInt</span>(<span style="color: #38bdf8;">"101010"</span>, <span style="color: #f43f5e;">2</span>);
-<span class="code-comment">// parseInt(string, base) parses a string in the specified base back into a normal integer (Denary).</span>
-        </div>
-        <div class="explainer-footer">
-            In IGCSE Computer Science, understanding number bases is crucial for storing spacecraft data efficiently (Hexadecimal is often used to represent memory addresses and binary streams compactly).
-        </div>
-    </div>
-
     <!-- Footer -->
     <footer>
-        Space Data Converter &bull; Built for <span>IGCSE Students</span> &amp; Space Explorers
+        Space Data Converter &bull; Built for <span>Space Explorers</span>
     </footer>
 
-    <!-- JavaScript Application Logic with Beginner Comments -->
+    <!-- JavaScript Application Logic -->
     <script>
         // Generate Starfield
         const starsContainer = document.getElementById('starsContainer');
@@ -583,30 +501,24 @@
 
             try {
                 if (currentMode === 'denary') {
-                    // Validate denary digits (0-9)
                     if (!/^\d+$/.test(rawValue)) {
                         throw new Error("Invalid Denary number! Only digits 0-9 are allowed.");
                     }
                     denaryValue = parseInt(rawValue, 10);
                 } 
                 else if (currentMode === 'binary') {
-                    // Validate binary digits (0 and 1)
                     if (!/^[01]+$/.test(rawValue)) {
                         throw new Error("Invalid Binary number! Only 0 and 1 are allowed.");
                     }
-                    // Educational comment: parseInt(str, 2) parses binary string to Base-10 integer
                     denaryValue = parseInt(rawValue, 2);
                 } 
                 else if (currentMode === 'hex') {
-                    // Validate hexadecimal digits (0-9, a-f, A-F)
                     if (!/^[0-9a-fA-F]+$/.test(rawValue)) {
                         throw new Error("Invalid Hexadecimal number! Use 0-9 and A-F.");
                     }
-                    // Educational comment: parseInt(str, 16) parses hex string to Base-10 integer
                     denaryValue = parseInt(rawValue, 16);
                 }
 
-                // Check for safe number limits
                 if (isNaN(denaryValue) || denaryValue < 0) {
                     throw new Error("Number is out of valid range.");
                 }
@@ -624,36 +536,26 @@
         }
 
         function updateResults(denary) {
-            // 1. Denary display
             document.getElementById('resDenary').textContent = denary.toLocaleString();
-
-            // 2. Binary display using .toString(2)
-            // Educational explanation: number.toString(2) converts the base-10 number to a binary string
+            
             const binaryStr = denary.toString(2);
-            // Format binary in groups of 4 for readability (common in IGCSE Computer Science)
             document.getElementById('resBinary').textContent = formatBinary(binaryStr);
 
-            // 3. Hexadecimal display using .toString(16)
-            // Educational explanation: number.toString(16) converts the base-10 number to uppercase hex string
             const hexStr = denary.toString(16).toUpperCase();
             document.getElementById('resHex').textContent = hexStr;
         }
 
-        // Helper to format binary string into 4-bit nibbles for clarity
         function formatBinary(binStr) {
             if (binStr === '0') return '0000';
-            // Pad start to make multiple of 4
             let padded = binStr;
             while (padded.length % 4 !== 0) {
                 padded = '0' + padded;
             }
-            // Insert space every 4 characters
             return padded.match(/.{1,4}/g).join(' ');
         }
 
-        // Copy Result Function
         function copyResult(elementId, btnElement) {
-            const textToCopy = document.getElementById(elementId).textContent.replace(/\s+/g, ''); // remove spacing for clean copy if binary
+            const textToCopy = document.getElementById(elementId).textContent.replace(/\s+/g, '');
             
             navigator.clipboard.writeText(textToCopy).then(() => {
                 const originalHTML = btnElement.innerHTML;
@@ -672,7 +574,7 @@
             });
         }
 
-        // Initial default calculation for 42 (The answer to life, universe, and spacecraft telemetry)
+        // Initial default calculation
         document.getElementById('numberInput').value = '42';
         handleInput();
     </script>
