@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Data Converter | IGCSE Computer Science</title>
+    <!-- Google Fonts for futuristic telemetry look -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Space+Grotesk:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0b0d17;
+            --bg-card: rgba(16, 22, 38, 0.75);
+            --border-glow: rgba(0, 242, 254, 0.3);
+            --neon-cyan: #00f2fe;
+            --neon-purple: #7928ca;
+            --neon-pink: #ff007f;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: rgba(10, 15, 30, 0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Animated Starfield / Space Background effect */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #151b3b 0%, #0b0d17 100%);
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            opacity: var(--opacity);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--opacity); transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(0.8); }
+        }
+
+        /* Nebula glows */
+        .nebula {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .nebula-1 {
+            top: -200px;
+            left: -200px;
+            background: var(--neon-cyan);
+        }
+        .nebula-2 {
+            bottom: -200px;
+            right: -200px;
+            background: var(--neon-purple);
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            z-index: 2;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-cyan);
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #ffffff 30%, var(--neon-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+        }
+
+        p.tagline {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Main Container Card */
+        .converter-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+                        0 0 30px rgba(0, 242, 254, 0.1);
+            z-index: 2;
+            margin-bottom: 40px;
+        }
+
+        /* Mode Selection Tabs */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+            background: rgba(5, 8, 18, 0.6);
+            padding: 6px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 12px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .mode-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(121, 40, 202, 0.2));
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        /* Input Group */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .base-indicator {
+            position: absolute;
+            left: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--neon-cyan);
+            background: rgba(0, 242, 254, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 16px 16px 16px 75px;
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5),
+                        0 0 15px rgba(0, 242, 254, 0.25);
+        }
+
+        .error-message {
+            color: var(--neon-pink);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            min-height: 20px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Results Panel */
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 25px;
+        }
+
+        .result-card {
+            background: rgba(10, 15, 30, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            border-color: rgba(121, 40, 202, 0.4);
+            box-shadow: 0 0 20px rgba(121, 40, 202, 0.15);
+        }
+
+        .result-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .result-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.35rem;
+            color: var(--neon-cyan);
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 242, 254, 0.15);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .copy-btn.copied {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+
+        /* Educational Code Explainer Card */
+        .explainer-card {
+            background: rgba(5, 8, 18, 0.8);
+            border: 1px solid rgba(121, 40, 202, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .explainer-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .explainer-header h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            color: var(--neon-purple);
+            letter-spacing: 0.5px;
+        }
+
+        .code-snippet {
+            background: #060913;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #a5b4fc;
+            overflow-x: auto;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .code-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #c084fc;
+        }
+
+        .code-method {
+            color: var(--neon-cyan);
+        }
+
+        .explainer-footer {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            padding: 20px 0;
+            z-index: 2;
+        }
+
+        footer span {
+            color: var(--neon-cyan);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .converter-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .mode-btn {
+                font-size: 0.8rem;
+                padding: 10px 6px;
+            }
+            .result-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+            }
+            .copy-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Space Background & Nebula -->
+    <div class="stars" id="starsContainer"></div>
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="badge">IGCSE Computer Science Module</div>
+        <h1>Space Data Converter</h1>
+        <p class="tagline">Convert Denary spacecraft telemetry data into Binary & Hexadecimal systems.</p>
+    </header>
+
+    <!-- Main Converter Card -->
+    <div class="converter-container">
+        <!-- Mode Selector -->
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="denary" onclick="setMode('denary')">Denary Input</button>
+            <button class="mode-btn" data-mode="binary" onclick="setMode('binary')">Binary Input</button>
+            <button class="mode-btn" data-mode="hex" onclick="setMode('hex')">Hex Input</button>
+        </div>
+
+        <!-- Input Box -->
+        <div class="input-group">
+            <label id="inputLabel" for="numberInput">Enter Denary (Base-10) Value</label>
+            <div class="input-wrapper">
+                <span class="base-indicator" id="baseIndicator">DEC 10</span>
+                <input type="text" id="numberInput" placeholder="e.g. 255" autocomplete="off" spellcheck="false" oninput="handleInput()">
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <!-- Results Display Section -->
+        <div class="results-section">
+            <!-- Denary Result -->
+            <div class="result-card" id="cardDenary">
+                <div class="result-info">
+                    <span class="result-label">Denary (Base-10)</span>
+                    <span class="result-value" id="resDenary">0</span>
+                </div>
+                <button class="copy-btn" onclick="copyResult('resDenary', this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copy
+                </button>
+            </div>
+
+            <!-- Binary Result -->
+            <div class="result-card" id="cardBinary">
+                <div class="result-info">
+                    <span class="result-label">Binary (Base-2)</span>
+                    <span class="result-value" id="resBinary">0</span>
+                </div>
+                <button class="copy-btn" onclick="copyResult('resBinary', this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copy
+                </button>
+            </div>
+
+            <!-- Hexadecimal Result -->
+            <div class="result-card" id="cardHex">
+                <div class="result-info">
+                    <span class="result-label">Hexadecimal (Base-16)</span>
+                    <span class="result-value" id="resHex">0</span>
+                </div>
+                <button class="copy-btn" onclick="copyResult('resHex', this)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IGCSE Student Educational Code Explainer -->
+    <div class="converter-container explainer-card">
+        <div class="explainer-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--neon-purple)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <h3>IGCSE Computer Science: How JavaScript Conversions Work</h3>
+        </div>
+        <div class="code-snippet">
+<span class="code-comment">// 1. Converting a number to Binary (Base-2)</span>
+<span class="code-keyword">let</span> decimalNum = <span style="color: #f43f5e;">42</span>;
+<span class="code-keyword">let</span> binaryString = decimalNum.<span class="code-method">toString</span>(<span style="color: #f43f5e;">2</span>); 
+<span class="code-comment">// .toString(2) tells JavaScript to convert the number into Base-2 (binary digits 0 and 1).</span>
+<span class="code-comment">// Result: "101010" (42 in binary is 32 + 8 + 2)</span>
+
+<span class="code-keyword">let</span> hexString = decimalNum.<span class="code-method">toString</span>(<span style="color: #f43f5e;">16</span>);
+<span class="code-comment">// .toString(16) converts the number into Base-16 (Hexadecimal: 0-9 and A-F).</span>
+<span class="code-comment">// Result: "2a" (2 × 16 + 10)</span>
+
+<span class="code-comment">// 2. Converting back from Binary/Hex to Denary</span>
+<span class="code-keyword">let</span> denaryVal = <span class="code-method">parseInt</span>(<span style="color: #38bdf8;">"101010"</span>, <span style="color: #f43f5e;">2</span>);
+<span class="code-comment">// parseInt(string, base) parses a string in the specified base back into a normal integer (Denary).</span>
+        </div>
+        <div class="explainer-footer">
+            In IGCSE Computer Science, understanding number bases is crucial for storing spacecraft data efficiently (Hexadecimal is often used to represent memory addresses and binary streams compactly).
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Space Data Converter &bull; Built for <span>IGCSE Students</span> &amp; Space Explorers
+    </footer>
+
+    <!-- JavaScript Application Logic with Beginner Comments -->
+    <script>
+        // Generate Starfield
+        const starsContainer = document.getElementById('starsContainer');
+        const starCount = 70;
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            const size = Math.random() * 2.5 + 0.5;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+            star.style.setProperty('--opacity', Math.random() * 0.7 + 0.3);
+            starsContainer.appendChild(star);
+        }
+
+        // Current conversion mode: 'denary', 'binary', or 'hex'
+        let currentMode = 'denary';
+
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Update active state of buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+            });
+
+            // Update input placeholder and base indicator label
+            const inputField = document.getElementById('numberInput');
+            const label = document.getElementById('inputLabel');
+            const indicator = document.getElementById('baseIndicator');
+
+            if (mode === 'denary') {
+                label.textContent = "Enter Denary (Base-10) Value";
+                indicator.textContent = "DEC 10";
+                inputField.placeholder = "e.g. 255";
+            } else if (mode === 'binary') {
+                label.textContent = "Enter Binary (Base-2) Value";
+                indicator.textContent = "BIN 2";
+                inputField.placeholder = "e.g. 11111111";
+            } else if (mode === 'hex') {
+                label.textContent = "Enter Hexadecimal (Base-16) Value";
+                indicator.textContent = "HEX 16";
+                inputField.placeholder = "e.g. FF";
+            }
+
+            // Clear input and recalculate
+            inputField.value = '';
+            document.getElementById('errorMessage').textContent = '';
+            updateResults(0);
+        }
+
+        function handleInput() {
+            const rawValue = document.getElementById('numberInput').value.trim();
+            const errorElement = document.getElementById('errorMessage');
+
+            if (rawValue === '') {
+                errorElement.textContent = '';
+                updateResults(0);
+                return;
+            }
+
+            let denaryValue = 0;
+
+            try {
+                if (currentMode === 'denary') {
+                    // Validate denary digits (0-9)
+                    if (!/^\d+$/.test(rawValue)) {
+                        throw new Error("Invalid Denary number! Only digits 0-9 are allowed.");
+                    }
+                    denaryValue = parseInt(rawValue, 10);
+                } 
+                else if (currentMode === 'binary') {
+                    // Validate binary digits (0 and 1)
+                    if (!/^[01]+$/.test(rawValue)) {
+                        throw new Error("Invalid Binary number! Only 0 and 1 are allowed.");
+                    }
+                    // Educational comment: parseInt(str, 2) parses binary string to Base-10 integer
+                    denaryValue = parseInt(rawValue, 2);
+                } 
+                else if (currentMode === 'hex') {
+                    // Validate hexadecimal digits (0-9, a-f, A-F)
+                    if (!/^[0-9a-fA-F]+$/.test(rawValue)) {
+                        throw new Error("Invalid Hexadecimal number! Use 0-9 and A-F.");
+                    }
+                    // Educational comment: parseInt(str, 16) parses hex string to Base-10 integer
+                    denaryValue = parseInt(rawValue, 16);
+                }
+
+                // Check for safe number limits
+                if (isNaN(denaryValue) || denaryValue < 0) {
+                    throw new Error("Number is out of valid range.");
+                }
+
+                if (denaryValue > 9007199254740991) {
+                    throw new Error("Number is too large for spacecraft memory limits!");
+                }
+
+                errorElement.textContent = '';
+                updateResults(denaryValue);
+
+            } catch (err) {
+                errorElement.textContent = err.message;
+            }
+        }
+
+        function updateResults(denary) {
+            // 1. Denary display
+            document.getElementById('resDenary').textContent = denary.toLocaleString();
+
+            // 2. Binary display using .toString(2)
+            // Educational explanation: number.toString(2) converts the base-10 number to a binary string
+            const binaryStr = denary.toString(2);
+            // Format binary in groups of 4 for readability (common in IGCSE Computer Science)
+            document.getElementById('resBinary').textContent = formatBinary(binaryStr);
+
+            // 3. Hexadecimal display using .toString(16)
+            // Educational explanation: number.toString(16) converts the base-10 number to uppercase hex string
+            const hexStr = denary.toString(16).toUpperCase();
+            document.getElementById('resHex').textContent = hexStr;
+        }
+
+        // Helper to format binary string into 4-bit nibbles for clarity
+        function formatBinary(binStr) {
+            if (binStr === '0') return '0000';
+            // Pad start to make multiple of 4
+            let padded = binStr;
+            while (padded.length % 4 !== 0) {
+                padded = '0' + padded;
+            }
+            // Insert space every 4 characters
+            return padded.match(/.{1,4}/g).join(' ');
+        }
+
+        // Copy Result Function
+        function copyResult(elementId, btnElement) {
+            const textToCopy = document.getElementById(elementId).textContent.replace(/\s+/g, ''); // remove spacing for clean copy if binary
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalHTML = btnElement.innerHTML;
+                btnElement.classList.add('copied');
+                btnElement.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Copied!
+                `;
+
+                setTimeout(() => {
+                    btnElement.classList.remove('copied');
+                    btnElement.innerHTML = originalHTML;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+
+        // Initial default calculation for 42 (The answer to life, universe, and spacecraft telemetry)
+        document.getElementById('numberInput').value = '42';
+        handleInput();
+    </script>
+</body>
+</html>
